@@ -1,0 +1,43 @@
+hologram:
+  worlds:
+    - "arene"
+    - "spawn"
+  duration: 10 # En secondes
+
+  # Placeholder si le tueur n'est pas un joueur ou est inconnu
+  unknown-killer-placeholder: "les forces de la nature"
+
+  lines-with-killer:
+    - "<dark_gray><bold>« </bold><red>%victim%</red> <white>est mort</white> <dark_gray><bold>»</bold>"
+    - "<gray><italic>(( Tué par </italic><gold><italic>%killer%</italic><gray><italic> ))</italic>"
+
+  lines-without-killer:
+    - "<red>%victim%</red> <white>est mort</white>"
+
+  text:
+    y-offset: 0.6 # Offset Y par rapport à la position de mort du joueur
+    background-color: "transparent" # 'transparent', 'R,G,B' (ex: "0,0,0"), ou 'A,R,G,B' (ex: "128,255,0,0" pour rouge semi-transparent)
+    billboard: VERTICAL # FIXED, VERTICAL, HORIZONTAL, CENTER
+    alignment: CENTER # LEFT, RIGHT, CENTER
+    shadow: true
+    see-through: false
+    # text-update-interval: 20 # (Optionnel, en ticks)
+
+  item:
+    type: WEAPON # NONE, WEAPON, VICTIM_HEAD, CUSTOM
+    y-offset: 0.8 # Offset Y par rapport à l'hologramme de texte (donc total = text.y-offset + item.y-offset)
+    billboard: VERTICAL
+    scale:
+      x: 0.4
+      y: 0.4
+      z: 0.4
+    # custom-item-stack: # Défini seulement si type: CUSTOM
+    #   ==: org.bukkit.inventory.ItemStack
+    #   v: 3126 # version de l'itemstack, peut varier
+    #   type: DIAMOND_SWORD
+    #   meta:
+    #     ==: ItemMeta
+    #     meta-type: UNSPECIFIC
+    #     display-name: '{"text":"Épée de la Mort"}'
+    #     enchants:
+    #       DAMAGE_ALL: 5
