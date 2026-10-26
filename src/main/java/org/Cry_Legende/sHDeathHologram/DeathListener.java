@@ -34,6 +34,13 @@ public class DeathListener implements Listener {
         }
     }
 
+    /** Retire les hologrammes encore affichés (appelé à la désactivation du plugin). */
+    public void shutdown() {
+        if (hologramService != null) {
+            hologramService.removeAll();
+        }
+    }
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (hologramService == null) {

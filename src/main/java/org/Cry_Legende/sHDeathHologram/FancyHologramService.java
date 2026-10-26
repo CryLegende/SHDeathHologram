@@ -13,7 +13,10 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -22,6 +25,8 @@ public class FancyHologramService {
     private final SHDeathHologram plugin;
     private final HologramManager hologramManager;
     private final Logger logger;
+    // Hologrammes en attente de suppression : retirés à la désactivation du plugin (la tâche planifiée serait annulée)
+    private final Set<Hologram> active = new HashSet<>();
 
     public FancyHologramService(SHDeathHologram plugin, HologramManager hologramManager) {
         this.plugin = plugin;
@@ -47,6 +52,7 @@ public class FancyHologramService {
             textHologramObject = hologramManager.create(textData);
             if (textHologramObject != null) {
                 hologramManager.addHologram(textHologramObject); // Enregistrer l'hologramme auprès du manager
+                active.add(textHologramObject);
                 logger.info("Text hologram '" + textHoloName + "' created and added.");
             } else {
                 logger.severe("Failed to create text hologram object for " + textHoloName + " (create() returned null).");
@@ -75,6 +81,7 @@ public class FancyHologramService {
                 itemHologramObject = hologramManager.create(itemData);
                 if (itemHologramObject != null) {
                     hologramManager.addHologram(itemHologramObject);
+                    active.add(itemHologramObject);
                     logger.info("Item hologram '" + itemHoloName + "' created and added.");
                 } else {
                     logger.severe("Failed to create item hologram object for " + itemHoloName + " (create() returned null).");
@@ -94,6 +101,8 @@ public class FancyHologramService {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             String logPrefix = "[Scheduler - " + textHoloName + "] ";
             logger.info(logPrefix + "Task running to remove holograms.");
+            active.remove(finalSharedTextHologramObject);
+            active.remove(finalSharedItemHologramObject);
 
             if (finalSharedTextHologramObject != null) {
                 try {
@@ -131,6 +140,21 @@ public class FancyHologramService {
                 }
             }
         }, displayDurationTicks);
+    }
+
+    /**
+     * Retire tout de suite les hologrammes encore affichés (désactivation du plugin) : ils ne sont pas persistants,
+     * mais resteraient dans le manager de FancyHolograms jusqu'au prochain redémarrage.
+     */
+    public void removeAll() {
+        for (Hologram hologram : new ArrayList<>(active)) {
+            try {
+                hologramManager.removeHologram(hologram);
+            } catch (Exception e) {
+                logger.warning("Impossible de retirer l'hologramme '" + hologram.getName() + "' : " + e.getMessage());
+            }
+        }
+        active.clear();
     }
 
     private void applyTextHologramProperties(TextHologramData textData, ConfigurationSection textSettings) {

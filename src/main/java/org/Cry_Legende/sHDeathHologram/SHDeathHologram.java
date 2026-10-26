@@ -9,6 +9,7 @@ public class SHDeathHologram extends JavaPlugin {
 
     private HologramManager hologramManager; // Stockage de la référence
     private boolean placeholderAPIEnabled;
+    private DeathListener deathListener;
 
     @Override
     public void onEnable() {
@@ -22,13 +23,17 @@ public class SHDeathHologram extends JavaPlugin {
 
         // Enregistrer le listener seulement si les dépendances sont OK
         // Le DeathListener lui-même vérifiera si hologramManager est non-null avant d'agir
-        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        deathListener = new DeathListener(this);
+        getServer().getPluginManager().registerEvents(deathListener, this);
         getLogger().info("SHDeathHologram a été activé avec succès !");
     }
 
     @Override
     public void onDisable() {
-        // Logique de désactivation si nécessaire (ex: supprimer des hologrammes persistants créés par ce plugin)
+        // Les hologrammes de mort encore affichés partent avec le plugin
+        if (deathListener != null) {
+            deathListener.shutdown();
+        }
         getLogger().info("SHDeathHologram a été désactivé.");
     }
 
