@@ -14,10 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class FancyHologramService {
@@ -26,15 +26,25 @@ public class FancyHologramService {
     private final HologramManager hologramManager;
     private final Logger logger;
     // Hologrammes en attente de suppression : retirés à la désactivation du plugin (la tâche planifiée serait annulée)
-    private final Set<Hologram> active = new HashSet<>();
+    // Ensemble concurrent : jamais de valeur nulle dedans
+    private final Set<Hologram> active = ConcurrentHashMap.newKeySet();
+    // Thread principal du serveur (le service est créé dans onEnable) : le scheduler et FancyHolograms ne s'utilisent que là
+    private final Thread mainThread;
 
     public FancyHologramService(SHDeathHologram plugin, HologramManager hologramManager) {
         this.plugin = plugin;
         this.hologramManager = hologramManager;
         this.logger = plugin.getLogger();
+        this.mainThread = Thread.currentThread();
     }
 
     public void createDeathHolograms(Location deathLocation, List<String> textLines, ItemStack itemForHologram, long displayDurationTicks) {
+        // La mort est signalée depuis le thread du monde du joueur : la création passe par le thread principal
+        if (Thread.currentThread() != mainThread) {
+            plugin.getServer().getScheduler().runTask(plugin,
+                () -> createDeathHolograms(deathLocation, textLines, itemForHologram, displayDurationTicks));
+            return;
+        }
         String textHoloName = "shdh_text_" + UUID.randomUUID().toString();
         Hologram textHologramObject = null; // Pour stocker l'objet hologramme de texte créé
         Hologram itemHologramObject = null; // Pour stocker l'objet hologramme d'item créé
@@ -101,8 +111,8 @@ public class FancyHologramService {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             String logPrefix = "[Scheduler - " + textHoloName + "] ";
             logger.info(logPrefix + "Task running to remove holograms.");
-            active.remove(finalSharedTextHologramObject);
-            active.remove(finalSharedItemHologramObject);
+            if (finalSharedTextHologramObject != null) active.remove(finalSharedTextHologramObject);
+            if (finalSharedItemHologramObject != null) active.remove(finalSharedItemHologramObject);
 
             if (finalSharedTextHologramObject != null) {
                 try {
