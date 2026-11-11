@@ -1,0 +1,7 @@
+# Messages de SHDeathHologram (commande d'administration). Couleurs avec &.
+# Variables : {sous-commandes} (usage-liste), {fichier} et {erreur} (reload-erreur).
+
+usage-liste: "&7&l« &c&lSH &8&l» &cUsage&7 : &c/shdeathhologram &7<{sous-commandes}>"
+pas-de-permission: "&7&l« &c&lSH &8&l» &cTu n'as pas la permission&7 d'utiliser cette commande."
+reload-ok: "&7&l« &a&lSH &8&l» &7Configuration &arechargée&7."
+reload-erreur: "&7&l« &c&lSH &8&l» &cRechargement refusé&7 : &c{fichier}&7 est invalide, l'ancienne configuration reste en place. &c{erreur}"

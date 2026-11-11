@@ -23,13 +23,27 @@ Utilisé sur : **Opale · Lobby**.
 - Obligatoires : `FancyHolograms`
 - Optionnelles : `PlaceholderAPI`
 
+## Commandes
+
+| Commande | Alias | Description | Permission |
+|---|---|---|---|
+| `/shdeathhologram reload` | — | Relit `config.yml` et `messages.yml` (la console peut l'utiliser). Appliqué aux prochaines morts ; en cas d'erreur YAML, l'ancienne configuration reste en place et le fichier fautif est indiqué. | `shdeathhologram.admin.reload` |
+
+## Permissions
+
+| Permission | Description | Par défaut |
+|---|---|---|
+| `shdeathhologram.admin` | Toutes les sous-commandes de `/shdeathhologram`. | `op` |
+| `shdeathhologram.admin.reload` | `/shdeathhologram reload`. | `op` |
+
 ## Configuration
 
-Fichiers par défaut repris du serveur (secrets remplacés par `CHANGE_ME`). Cliquez sur un fichier pour l'ouvrir :
+Fichiers par défaut repris du serveur ; `messages.yml` est créé au premier démarrage s'il manque. Cliquez sur un fichier pour l'ouvrir :
 
 <pre>
 plugins/SHDeathHologram/
-└── <a href="src/main/resources/config.yml">config.yml</a>
+├── <a href="src/main/resources/config.yml">config.yml</a>
+└── <a href="src/main/resources/messages.yml">messages.yml</a>
 </pre>
 
 ## Compilation

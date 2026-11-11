@@ -1,19 +1,28 @@
 package org.Cry_Legende.sHDeathHologram;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.HologramManager;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SHDeathHologram extends JavaPlugin {
 
     private HologramManager hologramManager; // Stockage de la référence
     private boolean placeholderAPIEnabled;
     private DeathListener deathListener;
+    private Messages messages;
 
     @Override
     public void onEnable() {
         saveDefaultConfig(); // Crée config.yml à partir des ressources s'il n'existe pas
+        messages = new Messages(this);
+        messages.loadAtStartup();
 
         if (!setupDependencies()) {
             getLogger().severe("Échec de la configuration des dépendances. Désactivation de SHDeathHologram.");
@@ -25,6 +34,12 @@ public class SHDeathHologram extends JavaPlugin {
         // Le DeathListener lui-même vérifiera si hologramManager est non-null avant d'agir
         deathListener = new DeathListener(this);
         getServer().getPluginManager().registerEvents(deathListener, this);
+        PluginCommand command = getCommand("shdeathhologram");
+        if (command != null) {
+            AdminCommand admin = new AdminCommand(this);
+            command.setExecutor(admin);
+            command.setTabCompleter(admin);
+        }
         getLogger().info("SHDeathHologram a été activé avec succès !");
     }
 
@@ -35,6 +50,35 @@ public class SHDeathHologram extends JavaPlugin {
             deathListener.shutdown();
         }
         getLogger().info("SHDeathHologram a été désactivé.");
+    }
+
+    Messages messages() {
+        return messages;
+    }
+
+    /**
+     * Relit config.yml et messages.yml. Renvoie null si tout est lu, sinon « fichier : erreur » : l'ancienne
+     * configuration reste alors en mémoire. Les réglages sont lus à chaque mort, il n'y a rien d'autre à relancer.
+     */
+    String reloadAll() {
+        File config = new File(getDataFolder(), "config.yml");
+        if (!config.exists()) {
+            saveDefaultConfig();
+        }
+        try {
+            Messages.loadStrict(config);
+        } catch (IOException | InvalidConfigurationException e) {
+            return "config.yml : " + Messages.describe(e);
+        }
+        YamlConfiguration loadedMessages;
+        try {
+            loadedMessages = messages.read();
+        } catch (IOException | InvalidConfigurationException e) {
+            return Messages.FILE + " : " + Messages.describe(e);
+        }
+        reloadConfig();
+        messages.apply(loadedMessages);
+        return null;
     }
 
     private boolean setupDependencies() {

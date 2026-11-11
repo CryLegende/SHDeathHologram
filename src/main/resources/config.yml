@@ -1,3 +1,22 @@
+# ======================================================================== #
+# SHDeathHologram
+#
+# Affiche quelques secondes, à l'endroit où un joueur meurt, un hologramme (FancyHolograms) avec le nom de la
+# victime et celui du tueur, et éventuellement un objet à côté (arme du tueur, tête de la victime ou objet fixe).
+# Seules les morts dans les mondes de hologram.worlds sont concernées. Les réglages sont lus à chaque mort.
+#
+# Commande (la console peut l'utiliser) :
+#   /shdeathhologram reload   Relit config.yml et messages.yml. Appliqué aux prochaines morts ; les hologrammes
+#                             déjà affichés disparaissent avec leurs anciens réglages. En cas d'erreur YAML,
+#                             l'ancienne configuration reste en place et le fichier fautif est indiqué.
+#
+# Permissions :
+#   shdeathhologram.admin          Toutes les sous-commandes (par défaut : op).
+#   shdeathhologram.admin.reload   /shdeathhologram reload (par défaut : op).
+#
+# Les messages de la commande sont dans messages.yml.
+# ======================================================================== #
+
 hologram:
   worlds:
     - "arene"
