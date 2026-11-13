@@ -19,8 +19,8 @@
 
 hologram:
   worlds:
-    - "arene"
-    - "spawn"
+    - "world"
+    - "world_nether"
   duration: 10 # En secondes
 
   # Placeholder si le tueur n'est pas un joueur ou est inconnu
