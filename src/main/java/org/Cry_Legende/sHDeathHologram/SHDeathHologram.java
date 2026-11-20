@@ -40,7 +40,6 @@ public class SHDeathHologram extends JavaPlugin {
             command.setExecutor(admin);
             command.setTabCompleter(admin);
         }
-        getLogger().info("SHDeathHologram a été activé avec succès !");
     }
 
     @Override
@@ -49,7 +48,6 @@ public class SHDeathHologram extends JavaPlugin {
         if (deathListener != null) {
             deathListener.shutdown();
         }
-        getLogger().info("SHDeathHologram a été désactivé.");
     }
 
     Messages messages() {
@@ -99,7 +97,6 @@ public class SHDeathHologram extends JavaPlugin {
                 getLogger().severe("FancyHolograms est détecté, mais son HologramManager n'a pas pu être initialisé.");
                 return false;
             }
-            getLogger().info("Connecté avec succès à FancyHolograms.");
         } catch (NoClassDefFoundError e) {
             getLogger().severe("Erreur de définition de classe lors de la connexion à FancyHolograms. " +
                 "Assurez-vous que le JAR de FancyHolograms est correctement installé et compatible. Erreur: " + e.getMessage());
@@ -117,7 +114,6 @@ public class SHDeathHologram extends JavaPlugin {
         // 2. Vérification de PlaceholderAPI (dépendance optionnelle/soft)
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.placeholderAPIEnabled = true;
-            getLogger().info("Connecté avec succès à PlaceholderAPI.");
         } else {
             this.placeholderAPIEnabled = false;
             getLogger().info("PlaceholderAPI n'a pas été trouvé. Les placeholders de PAPI ne seront pas disponibles.");
